@@ -2,6 +2,8 @@ name: ceph-broker
 memory: 256M
 buildpack: ruby_buildpack
 env:
+  BROKER_USERNAME: admin
+  BROKER_PASSWORD: admin
   RADOS_HOST: your-rados-gw.com
   RADOS_PORT: 443
   RADOS_SCHEME: https
