@@ -12,12 +12,6 @@ module RiakCsBroker
       # access settings we want to validate and let SettingsLogic trow an exception
       # if a setting is not populated.
 
-      self.riak_cs
-      self.riak_cs.host
-      self.riak_cs.port
-      self.riak_cs.access_key_id
-      self.riak_cs.secret_access_key
-
       self.ssl_validation
       self.username
       self.password

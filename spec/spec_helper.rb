@@ -1,7 +1,7 @@
 require 'webmock'
-require 'codeclimate-test-reporter'
-CodeClimate::TestReporter.start
-WebMock.disable_net_connect!(allow: 'codeclimate.com')
+#require 'codeclimate-test-reporter'
+#CodeClimate::TestReporter.start
+#WebMock.disable_net_connect!(allow: 'codeclimate.com')
 
 
 ENV["RACK_ENV"] = "test"
@@ -35,7 +35,7 @@ RSpec.configure do |config|
   end
 
   config.before(:each) do |c|
-      Fog.mock!
-      Fog::Mock.reset
+    Fog.mock!
+    Fog::Mock.reset
   end
 end

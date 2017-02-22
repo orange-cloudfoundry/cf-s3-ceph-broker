@@ -1,10 +1,12 @@
 require 'addressable/template'
 require 'fog'
+require 'fog/radosgw'
 require 'hash_to_acl_with_stripping'
+require 'multi_logger'
 
 module RiakCsBroker
   class ServiceInstances
-    BINDING_BUCKET_NAME = 'cf-riak-cs-service-broker-bindings'
+    BINDING_BUCKET_NAME = 'cf-s3-ceph-service-broker-bindings'
 
     class ClientError < StandardError
     end
@@ -18,30 +20,33 @@ module RiakCsBroker
     end
 
     FOG_OPTIONS = {
-      provider:   'AWS',
-      path_style: true,
-      scheme:     'https'
+        provider: 'AWS',
+        path_style: true,
+        scheme: 'https'
     }
 
     attr_reader :storage_client, :provision_client
 
     def initialize(options = {})
-      @storage_client   = Fog::Storage.new(
-        provider:              FOG_OPTIONS[:provider],
-        path_style:            FOG_OPTIONS[:path_style],
-        host:                  options[:host],
-        port:                  options[:port],
-        scheme:                options[:scheme] || FOG_OPTIONS[:scheme],
-        aws_access_key_id:     options[:access_key_id],
-        aws_secret_access_key: options[:secret_access_key]
+      @storage_client = Fog::Storage.new(
+          provider: FOG_OPTIONS[:provider],
+          path_style: FOG_OPTIONS[:path_style],
+          host: options[:host],
+          port: options[:port],
+          use_iam_profile: false,
+          aws_signature_version: 2,
+          region: nil,
+          scheme: options[:scheme] || FOG_OPTIONS[:scheme],
+          aws_access_key_id: options[:access_key_id],
+          aws_secret_access_key: options[:secret_access_key]
       )
-      @provision_client = Fog::RiakCS::Provisioning.new(
-        path_style:               FOG_OPTIONS[:path_style],
-        host:                     options[:host],
-        port:                     options[:port],
-        scheme:                   options[:scheme] || FOG_OPTIONS[:scheme],
-        riakcs_access_key_id:     options[:access_key_id],
-        riakcs_secret_access_key: options[:secret_access_key]
+      @provision_client = Fog::Radosgw::Provisioning.new(
+          path_style: FOG_OPTIONS[:path_style],
+          host: options[:host],
+          port: options[:port],
+          scheme: options[:scheme] || FOG_OPTIONS[:scheme],
+          radosgw_access_key_id: options[:access_key_id],
+          radosgw_secret_access_key: options[:secret_access_key]
       )
       @storage_client.directories.create(key: BINDING_BUCKET_NAME)
     rescue Excon::Errors::Timeout
@@ -89,13 +94,13 @@ module RiakCsBroker
         add_user_to_bucket_acl(self.class.bucket_name(instance_id), user_id)
 
         {
-          uri:               bucket_uri(instance_id, user_key, user_secret),
-          access_key_id:     user_key,
-          secret_access_key: user_secret
+            uri: bucket_uri(instance_id, user_key, user_secret),
+            access_key_id: user_key,
+            secret_access_key: user_secret
         }
-      rescue Fog::RiakCS::Provisioning::UserAlreadyExists => e
+      rescue Fog::Radosgw::Provisioning::UserAlreadyExists => e
         raise BindingAlreadyExistsError.new("Attempted to create a Riak CS user for #{binding_id}, but couldn't: #{e.message}.")
-      rescue Fog::RiakCS::Provisioning::ServiceUnavailable => e
+      rescue Fog::Radosgw::Provisioning::ServiceUnavailable => e
         raise ServiceUnavailableError.new("Riak CS unavailable: #{e.message}")
       rescue Excon::Errors::Timeout
         raise ServiceUnavailableError
@@ -137,24 +142,23 @@ module RiakCsBroker
     end
 
     def bucket_uri(bucket_id, user_key, user_secret)
-      request_uri         = Addressable::URI.parse(@storage_client.request_url(bucket_name: self.class.bucket_name(bucket_id)))
+      request_uri = Addressable::URI.parse(@storage_client.request_url(bucket_name: self.class.bucket_name(bucket_id)))
       bucket_uri_template = Addressable::Template.new("{scheme}://{key}:{secret}@{host}:{port}{/bucket_name}")
       bucket_uri_template.expand(
-        scheme:      request_uri.scheme,
-        key:         user_key,
-        secret:      user_secret,
-        host:        request_uri.host,
-        port:        request_uri.port,
-        bucket_name: self.class.bucket_name(bucket_id)
+          scheme: request_uri.scheme,
+          key: user_key,
+          secret: user_secret,
+          host: request_uri.host,
+          port: request_uri.port,
+          bucket_name: self.class.bucket_name(bucket_id)
       ).to_s
     end
 
     def create_user(user_name)
-      user = @provision_client.create_user("#{user_name}@example.com", user_name).body
-
-      store_binding_id_to_user_id_mapping(user_name, user['id'])
-
-      [user['id'], user['key_id'], user['key_secret']]
+      user = @provision_client.create_user(user_name, user_name, "#{user_name}@example.com").body
+      key = user['keys'].first
+      store_binding_id_to_user_id_mapping(user_name, key['user'])
+      [key['user'], key['access_key'], key['secret_key']]
     end
 
     def store_binding_id_to_user_id_mapping(binding_id, user_id)
@@ -166,11 +170,11 @@ module RiakCsBroker
     end
 
     def add_user_to_bucket_acl(bucket_name, user_id)
-      grantee_hash             = { 'ID' => user_id }
-      write_grant              = { 'Permission' => 'WRITE', 'Grantee' => grantee_hash }
-      read_grant               = { 'Permission' => 'READ', 'Grantee' => grantee_hash }
-      read_acp_grant           = { 'Permission' => 'READ_ACP', 'Grantee' => grantee_hash }
-      acl                      = @storage_client.get_bucket_acl(bucket_name).body
+      grantee_hash = {'ID' => user_id}
+      write_grant = {'Permission' => 'WRITE', 'Grantee' => grantee_hash}
+      read_grant = {'Permission' => 'READ', 'Grantee' => grantee_hash}
+      read_acp_grant = {'Permission' => 'READ_ACP', 'Grantee' => grantee_hash}
+      acl = @storage_client.get_bucket_acl(bucket_name).body
       acl['AccessControlList'] += [read_grant, write_grant, read_acp_grant]
       @storage_client.put_bucket_acl(bucket_name, acl)
     end

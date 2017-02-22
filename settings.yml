@@ -1,39 +1,30 @@
 ---
-username: admin
-password: admin
-
 ssl_validation: false
 
-riak_cs:
-  host: riakcs.bosh-lite.com
-  port: 80
-  scheme: http
-  access_key_id: admin-key
-  secret_access_key: admin-secret
-
-message_bus_servers:
-- nats://nats:nats@127.0.0.1:4222
-
-ip: 127.0.0.1
-port: 80
-external_host: p-cs.bosh-lite.com
+# only needed if you want to use this in a bosh release
+#message_bus_servers:
+#- nats://nats:nats@127.0.0.1:4222
+#
+#ip: 127.0.0.1
+#port: 80
+#external_host: p-cs.bosh-lite.com
 
 catalog:
   services:
   - bindable: true
-    description: An S3-compatible open source storage built on top of Riak.
+    description: An S3-compatible open source storage built on top of Ceph (Rados gateway).
     id: 33d2eeb0-0236-4c83-b494-da3faeb5b2e8
     metadata:
-      displayName: Riak CS Storage
+      displayName: S3-Ceph
       documentationUrl: https://github.com/cloudfoundry/cf-riak-cs-broker
-      imageUrl: http://www.linux.com/news/galleries/image/riak-cs%3Fformat%3Dimage%26thumbnail%3Dsmall
-      longDescription: Provisioning the service creates a Riak CS bucket. Binding an
+      imageUrl: http://docs.ceph.com/docs/giant/_static/logo.png
+      longDescription: Provisioning the service creates a Ceph bucket through Rados gateway. Binding an
         application creates unique credentials for that application to access the bucket.
-      providerDisplayName: Riak CS
+      providerDisplayName: S3-Ceph
       supportUrl: https://github.com/cloudfoundry/cf-riak-cs-broker/issues
-    name: riak-cs
+    name: s3-ceph
     plans:
-    - description: A bucket on Riak CS.
+    - description: A bucket on Ceph (Rados gateway).
       id: 946ce484-376b-41b4-8c4e-4bc830676115
       metadata:
         bullets:
@@ -43,8 +34,11 @@ catalog:
             usd: 0.0
           unit: MONTHLY
         displayName: Bucket
-      name: bucket
+      name: unlimited
     tags:
     - blobstore
+    - s3
+    - ceph
+    - radosgw
 
 syslog_progname: vcap.riak-cs-broker

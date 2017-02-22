@@ -1,129 +1,257 @@
 GIT
-  remote: https://github.com/cf-blobstore-eng/fog
-  revision: dc3c9e270a47519996207eba1c224d37be0fd991
-  branch: development
-  specs:
-    fog (1.19.0)
-      builder
-      excon (~> 0.31.0)
-      formatador (~> 0.2.0)
-      mime-types
-      multi_json (~> 1.0)
-      net-scp (~> 1.1)
-      net-ssh (>= 2.1.3)
-      nokogiri (>= 1.5.11)
-
-GIT
   remote: https://github.com/cloudfoundry/cf-registrar
-  revision: 49850ee876652a59dbd2d73dad726b3b808bb8f9
+  revision: 642913e02a7f9e8d04da259492c6aa9420b988fb
   specs:
-    cf-registrar (1.0.1)
-      cf-message-bus
+    cf-registrar (1.0.3)
+      cf-message-bus (~> 0.3.0)
       eventmachine (~> 1.0.0)
       steno
       vcap-concurrency
 
+GIT
+  remote: https://github.com/orange-cloudfoundry/fog-radosgw
+  revision: 59aaf8e12b03218ef1c53eeabae8fbb173e51877
+  branch: master
+  specs:
+    fog-radosgw (0.0.5)
+      fog-core (>= 1.21.0)
+      fog-json
+      fog-xml (>= 0.0.1)
+
 GEM
   remote: https://rubygems.org/
   specs:
-    addressable (2.3.6)
-    awesome_print (1.2.0)
-    builder (3.2.2)
-    cf-message-bus (0.2.0)
+    CFPropertyList (2.3.5)
+    addressable (2.5.0)
+      public_suffix (~> 2.0, >= 2.0.2)
+    awesome_print (1.7.0)
+    builder (3.2.3)
+    cf-message-bus (0.3.4)
       eventmachine (~> 1.0.0)
-      nats (>= 0.5.0.beta.12, < 0.6)
+      nats (>= 0.5.0, < 0.6)
       vcap-concurrency
       yajl-ruby
-    codeclimate-test-reporter (0.3.0)
-      simplecov (>= 0.7.1, < 1.0.0)
-    crack (0.4.2)
+    codeclimate-test-reporter (1.0.5)
+      simplecov
+    crack (0.4.3)
       safe_yaml (~> 1.0.0)
-    daemons (1.1.9)
-    diff-lcs (1.2.5)
+    daemons (1.2.4)
+    diff-lcs (1.3)
     docile (1.1.5)
     eventmachine (1.0.7)
-    excon (0.31.0)
+    excon (0.55.0)
     fission (0.5.0)
       CFPropertyList (~> 2.2)
-    fluent-logger (0.4.9)
-      msgpack (>= 0.4.4, < 0.6.0, != 0.5.3, != 0.5.2, != 0.5.1, != 0.5.0)
-      yajl-ruby (~> 1.0)
+    fluent-logger (0.6.2)
+      msgpack (>= 0.5.6, < 2)
+    fog (1.38.0)
+      fog-aliyun (>= 0.1.0)
+      fog-atmos
+      fog-aws (>= 0.6.0)
+      fog-brightbox (~> 0.4)
+      fog-cloudatcost (~> 0.1.0)
+      fog-core (~> 1.32)
+      fog-dynect (~> 0.0.2)
+      fog-ecloud (~> 0.1)
+      fog-google (<= 0.1.0)
+      fog-json
+      fog-local
+      fog-openstack
+      fog-powerdns (>= 0.1.1)
+      fog-profitbricks
+      fog-rackspace
+      fog-radosgw (>= 0.0.2)
+      fog-riakcs
+      fog-sakuracloud (>= 0.0.4)
+      fog-serverlove
+      fog-softlayer
+      fog-storm_on_demand
+      fog-terremark
+      fog-vmfusion
+      fog-voxel
+      fog-vsphere (>= 0.4.0)
+      fog-xenserver
+      fog-xml (~> 0.1.1)
+      ipaddress (~> 0.5)
+    fog-aliyun (0.1.0)
+      fog-core (~> 1.27)
+      fog-json (~> 1.0)
+      ipaddress (~> 0.8)
+      xml-simple (~> 1.1)
+    fog-atmos (0.1.0)
+      fog-core
+      fog-xml
+    fog-aws (1.2.0)
+      fog-core (~> 1.38)
+      fog-json (~> 1.0)
+      fog-xml (~> 0.1)
+      ipaddress (~> 0.8)
+    fog-brightbox (0.11.0)
+      fog-core (~> 1.22)
+      fog-json
+      inflecto (~> 0.0.2)
+    fog-cloudatcost (0.1.2)
+      fog-core (~> 1.36)
+      fog-json (~> 1.0)
+      fog-xml (~> 0.1)
+      ipaddress (~> 0.8)
+    fog-core (1.43.0)
+      builder
+      excon (~> 0.49)
+      formatador (~> 0.2)
+    fog-dynect (0.0.3)
+      fog-core
+      fog-json
+      fog-xml
+    fog-ecloud (0.3.0)
+      fog-core
+      fog-xml
+    fog-google (0.1.0)
+      fog-core
+      fog-json
+      fog-xml
+    fog-json (1.0.2)
+      fog-core (~> 1.0)
+      multi_json (~> 1.10)
+    fog-local (0.3.1)
+      fog-core (~> 1.27)
+    fog-openstack (0.1.19)
+      fog-core (>= 1.40)
+      fog-json (>= 1.0)
+      ipaddress (>= 0.8)
+    fog-powerdns (0.1.1)
+      fog-core (~> 1.27)
+      fog-json (~> 1.0)
+      fog-xml (~> 0.1)
+    fog-profitbricks (3.0.0)
+      fog-core (~> 1.42)
+      fog-json (~> 1.0)
+    fog-rackspace (0.1.4)
+      fog-core (>= 1.35)
+      fog-json (>= 1.0)
+      fog-xml (>= 0.1)
+      ipaddress (>= 0.8)
+    fog-riakcs (0.1.0)
+      fog-core
+      fog-json
+      fog-xml
+    fog-sakuracloud (1.7.5)
+      fog-core
+      fog-json
+    fog-serverlove (0.1.2)
+      fog-core
+      fog-json
+    fog-softlayer (1.1.4)
+      fog-core
+      fog-json
+    fog-storm_on_demand (0.1.1)
+      fog-core
+      fog-json
+    fog-terremark (0.1.0)
+      fog-core
+      fog-xml
+    fog-vmfusion (0.1.0)
+      fission
+      fog-core
+    fog-voxel (0.1.0)
+      fog-core
+      fog-xml
+    fog-vsphere (1.7.0)
+      fog-core
+      rbvmomi (~> 1.9)
+    fog-xenserver (0.2.3)
+      fog-core
+      fog-xml
+    fog-xml (0.1.2)
+      fog-core
+      nokogiri (~> 1.5, >= 1.5.11)
     formatador (0.2.5)
-    json_pure (1.8.1)
-    json_spec (1.1.2)
+    hashdiff (0.3.2)
+    inflecto (0.0.2)
+    ipaddress (0.8.3)
+    json (2.0.3)
+    json_pure (1.8.6)
+    json_spec (1.1.4)
       multi_json (~> 1.0)
       rspec (>= 2.0, < 4.0)
-    kgio (2.9.2)
-    mime-types (2.3)
-    mini_portile (0.6.0)
-    msgpack (0.5.8)
-    multi_json (1.10.1)
-    nats (0.5.0.beta.14)
-      daemons (>= 1.1.9)
-      eventmachine (>= 1.0.3)
-      json_pure (>= 1.8.1)
-      thin (>= 1.6.0)
-    net-scp (1.2.1)
-      net-ssh (>= 2.6.5)
-    net-ssh (2.9.1)
-    nokogiri (1.6.2.1)
-      mini_portile (= 0.6.0)
-    rack (1.5.2)
+    kgio (2.11.0)
+    mime-types (3.1)
+      mime-types-data (~> 3.2015)
+    mime-types-data (3.2016.0521)
+    mini_portile2 (2.1.0)
+    msgpack (1.0.3)
+    multi_json (1.12.1)
+    nats (0.5.1)
+      daemons (~> 1.1, >= 1.2.2)
+      eventmachine (~> 1.0, = 1.0.7)
+      json_pure (~> 1.8, >= 1.8.1)
+      thin (~> 1.6, >= 1.6.3)
+    nokogiri (1.7.0.1)
+      mini_portile2 (~> 2.1.0)
+    public_suffix (2.0.5)
+    rack (1.6.5)
     rack-protection (1.5.3)
       rack
-    rack-test (0.6.2)
+    rack-test (0.6.3)
       rack (>= 1.0)
-    raindrops (0.13.0)
-    rake (10.3.2)
-    roodi (4.0.0)
+    raindrops (0.17.0)
+    rake (12.0.0)
+    rbvmomi (1.9.4)
+      builder (~> 3.2)
+      json (>= 1.8)
+      nokogiri (~> 1.5)
+      trollop (~> 2.1)
+    roodi (5.0.0)
       ruby_parser (~> 3.2, >= 3.2.2)
-    rspec (3.2.0)
-      rspec-core (~> 3.2.0)
-      rspec-expectations (~> 3.2.0)
-      rspec-mocks (~> 3.2.0)
-    rspec-core (3.2.3)
-      rspec-support (~> 3.2.0)
-    rspec-expectations (3.2.1)
+    rspec (3.5.0)
+      rspec-core (~> 3.5.0)
+      rspec-expectations (~> 3.5.0)
+      rspec-mocks (~> 3.5.0)
+    rspec-core (3.5.4)
+      rspec-support (~> 3.5.0)
+    rspec-expectations (3.5.0)
       diff-lcs (>= 1.2.0, < 2.0)
-      rspec-support (~> 3.2.0)
-    rspec-mocks (3.2.1)
+      rspec-support (~> 3.5.0)
+    rspec-mocks (3.5.0)
       diff-lcs (>= 1.2.0, < 2.0)
-      rspec-support (~> 3.2.0)
-    rspec-support (3.2.2)
-    ruby_parser (3.6.2)
+      rspec-support (~> 3.5.0)
+    rspec-support (3.5.0)
+    ruby_parser (3.8.4)
       sexp_processor (~> 4.1)
     safe_yaml (1.0.4)
     settingslogic (2.0.9)
-    sexp_processor (4.4.3)
-    simplecov (0.8.2)
+    sexp_processor (4.8.0)
+    simplecov (0.13.0)
       docile (~> 1.1.0)
-      multi_json
-      simplecov-html (~> 0.8.0)
-    simplecov-html (0.8.0)
-    sinatra (1.4.5)
-      rack (~> 1.4)
+      json (>= 1.8, < 3)
+      simplecov-html (~> 0.10.0)
+    simplecov-html (0.10.0)
+    sinatra (1.4.8)
+      rack (~> 1.5)
       rack-protection (~> 1.4)
-      tilt (~> 1.3, >= 1.3.4)
-    steno (1.2.4)
+      tilt (>= 1.3, < 3)
+    steno (1.3.4)
       fluent-logger
       yajl-ruby (~> 1.0)
-    thin (1.6.2)
-      daemons (>= 1.0.9)
-      eventmachine (>= 1.0.0)
-      rack (>= 1.0.0)
-    tilt (1.4.1)
+    thin (1.7.0)
+      daemons (~> 1.0, >= 1.0.9)
+      eventmachine (~> 1.0, >= 1.0.4)
+      rack (>= 1, < 3)
+    tilt (2.0.6)
+    trollop (2.1.2)
     unf (0.1.4)
       unf_ext
-    unf_ext (0.0.6)
-    unicorn (4.8.3)
+    unf_ext (0.0.7.2)
+    unicorn (5.2.0)
       kgio (~> 2.6)
-      rack
       raindrops (~> 0.7)
     vcap-concurrency (0.1.0)
-    webmock (1.18.0)
+    webmock (2.3.2)
       addressable (>= 2.3.6)
       crack (>= 0.3.2)
-    yajl-ruby (1.2.1)
+      hashdiff
+    xml-simple (1.1.5)
+    yajl-ruby (1.3.0)
 
 PLATFORMS
   ruby
@@ -133,8 +261,10 @@ DEPENDENCIES
   awesome_print
   cf-registrar!
   codeclimate-test-reporter
-  fog!
+  fog
+  fog-radosgw!
   json_spec
+  mime-types
   nats
   rack-test
   rake
@@ -145,3 +275,9 @@ DEPENDENCIES
   unf
   unicorn
   webmock
+
+RUBY VERSION
+   ruby 2.2.6p396
+
+BUNDLED WITH
+   1.14.5

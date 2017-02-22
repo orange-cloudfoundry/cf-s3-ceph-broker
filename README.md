@@ -1,24 +1,19 @@
-# Riak CS Service Broker for Cloud Foundry
-
-### Build Status
-
-[![Build Status](https://travis-ci.org/cloudfoundry/cf-riak-cs-broker.png?branch=master)](https://travis-ci.org/cloudfoundry/cf-riak-cs-broker) (master)
+# S3 Ceph (Rados Gateway) Service Broker for Cloud Foundry
 
 
 ### Description
 
-This is a [Riak CS](http://basho.com/riak-cloud-storage/) service broker for the Cloud Foundry [v2 services API](http://docs.cloudfoundry.org/services/api.html).
+This is a [S3 Ceph](http://docs.ceph.com/) service broker for Cloud Foundry.
 
 This service broker allows users to provision instances of an S3-compatible storage service.
-Provisioning the service creates a Riak CS bucket.
+Provisioning the service creates a Ceph bucket through [rados gateway](http://docs.ceph.com/docs/master/radosgw/).
 Binding an application creates unique credentials for that application to access the bucket.
 
-Based on [the Riak service broker by @hectcastro](https://github.com/hectcastro/cf-riak-service-broker).
+Highly based on [the Riak service broker by pivotal](https://github.com/cloudfoundry/cf-riak-cs-broker).
 
 ### Prerequisites
 
-This service broker must be configured to access a Riak CS cluster.
-You can use Bosh to deploy such a cluster alongside Cloud Foundry, or it can be deployed locally by [bosh-lite](https://github.com/cloudfoundry/bosh-lite) for development purposes. Deploying this as a standalone application to cloud foundry (e.g. via `cf push`) is not supported. A Bosh release for Riak and Riak CS can be found [here](https://github.com/cloudfoundry/cf-riak-cs-release).
+This service broker must be configured to access a Rados Gateway.
 
 ### Testing
 
@@ -26,12 +21,23 @@ To run all specs: `rake`
 
 ### Usage
 
-Configure the `settings.yml` file for your environment.
+Set your configuration through the `manifest.yml` when running in cloud foundry or set env var which can be found in this file.
+*(Optional)* Configure the `settings.yml` to change your catalog.
 
-Start the Riak CS Service Broker:
+
+#### Start locally
+
+Start the S3 Ceph Service Broker:
+
 
 ```
 bundle exec rackup
 ```
 
 Add the broker to Cloud Foundry as described by [the service broker documentation](http://docs.cloudfoundry.org/services/managing-service-brokers.html).
+
+#### Start on cloud foundry
+
+```
+cf push
+```

@@ -1,10 +1,12 @@
 source "https://rubygems.org"
 
-ruby '2.2.3'
+ruby '2.2.6'
 
 gem 'addressable'
-gem 'fog', git: 'https://github.com/cf-blobstore-eng/fog', branch: 'development'
+gem 'fog-radosgw', git: 'https://github.com/orange-cloudfoundry/fog-radosgw', branch: 'master'
+gem 'fog'
 gem 'sinatra'
+gem 'mime-types'
 gem 'unf'
 gem 'settingslogic'
 gem 'cf-registrar', git: 'https://github.com/cloudfoundry/cf-registrar'

@@ -31,7 +31,7 @@ end
 
 shared_examples "it handles timeouts by raising ServiceUnavailableError" do
   it "raises ServiceUnavailableError" do
-    expect{ subject }.to raise_error(RiakCsBroker::ServiceInstances::ServiceUnavailableError)
+    expect { subject }.to raise_error(RiakCsBroker::ServiceInstances::ServiceUnavailableError)
   end
 end
 
@@ -101,9 +101,9 @@ describe RiakCsBroker::ServiceInstances do
         before do
           bucket_name = RiakCsBroker::ServiceInstances.bucket_name('my-instance')
           service_instances.storage_client.directories.get(bucket_name).files.create(
-            key: 'some-key',
-            body: 'value',
-            public: true
+              key: 'some-key',
+              body: 'value',
+              public: true
           )
         end
 
@@ -176,9 +176,9 @@ describe RiakCsBroker::ServiceInstances do
 
     context "when the instance exists" do
       let(:expected_creds) { {
-        uri: "http://user-key:user-secret@riakcs.bosh-lite.com/service-instance-my-instance",
-        access_key_id: "user-key",
-        secret_access_key: "user-secret"
+          uri: "http://user-key:user-secret@riakcs.bosh-lite.com/service-instance-my-instance",
+          access_key_id: "user-key",
+          secret_access_key: "user-secret"
       } }
 
       before do
@@ -188,9 +188,13 @@ describe RiakCsBroker::ServiceInstances do
       context "and the binding id is not already bound" do
         before do
           response = double(:response, body: {
-            'key_id' => 'user-key',
-            'key_secret' => 'user-secret',
-            'id' => 'user-id'
+              'keys' => [
+                  {
+                      'user' => 'user-id',
+                      'access_key' => 'user-key',
+                      'secret_key' => 'user-secret',
+                  }
+              ],
           })
           allow(service_instances.provision_client).to receive(:create_user).and_return(response)
         end
@@ -221,7 +225,7 @@ describe RiakCsBroker::ServiceInstances do
 
       context "when it is already bound but not stored by the broker" do
         before do
-          allow(service_instances.provision_client).to receive(:create_user).and_raise(Fog::RiakCS::Provisioning::UserAlreadyExists)
+          allow(service_instances.provision_client).to receive(:create_user).and_raise(Fog::Radosgw::Provisioning::UserAlreadyExists)
         end
 
         it "raises BindingAlreadyExistsError" do
@@ -231,7 +235,7 @@ describe RiakCsBroker::ServiceInstances do
 
       context "when Riak CS is not available" do
         before do
-          allow(service_instances.provision_client).to receive(:create_user).and_raise(Fog::RiakCS::Provisioning::ServiceUnavailable)
+          allow(service_instances.provision_client).to receive(:create_user).and_raise(Fog::Radosgw::Provisioning::ServiceUnavailable)
         end
 
         it "raises ServiceUnavailableError" do
@@ -320,9 +324,13 @@ describe RiakCsBroker::ServiceInstances do
       context "when the binding exists" do
         before do
           response = double(:response, body: {
-            'key_id' => 'user-key',
-            'key_secret' => 'user-secret',
-            'id' => 'user-id'
+              'keys' => [
+                  {
+                      'user' => 'user-id',
+                      'access_key' => 'user-key',
+                      'secret_key' => 'user-secret',
+                  }
+              ],
           })
           allow(service_instances.provision_client).to receive(:create_user).and_return(response)
           service_instances.bind("my-instance", "some-binding-id")

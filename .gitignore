@@ -1,6 +1,7 @@
 bin/
 config/broker.yml
 spec/config/broker.yml
-manifest.yml
+manifest-*.yml
 .env
+/vendor
 .idea/

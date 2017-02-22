@@ -14,12 +14,14 @@ require 'multi_logger'
 module RiakCsBroker
   class App < Sinatra::Base
     use Rack::Auth::Basic, "Cloud Foundry Riak CS Service Broker" do |username, password|
-      [username, password] == [Config.username, Config.password]
+      [username, password] == [ENV['BROKER_USERNAME'] || Config.username, ENV['BROKER_PASSWORD'] || Config.password]
     end
 
     configure do
       Config.validate!
-      RouteRegistrar.register!
+      if ENV["VCAP_APPLICATION"] != nil
+        RouteRegistrar.register!
+      end
     end
 
     before do
@@ -54,7 +56,7 @@ module RiakCsBroker
         logger.error(e.message)
         logger.error(e.backtrace)
         status 500
-        { description: e.message }.to_json
+        {description: e.message}.to_json
       end
     end
 
@@ -71,7 +73,7 @@ module RiakCsBroker
         logger.error(e.message)
         logger.error(e.backtrace)
         status 500
-        { description: e.message }.to_json
+        {description: e.message}.to_json
       end
     end
 
@@ -79,11 +81,11 @@ module RiakCsBroker
       begin
         credentials = instances.bind(params[:id], params[:binding_id])
         status 201
-        { "credentials" => credentials }.to_json
+        {"credentials" => credentials}.to_json
       rescue ServiceInstances::InstanceNotFoundError => e
         logger.info("Could not bind to an unknown service instance: #{params[:id]}")
         status 404
-        { description: "Could not bind to an unknown service instance: #{params[:id]}" }.to_json
+        {description: "Could not bind to an unknown service instance: #{params[:id]}"}.to_json
       rescue ServiceInstances::BindingAlreadyExistsError => e
         logger.info("Could not bind because of a conflict: #{e.message}")
         status 409
@@ -91,12 +93,12 @@ module RiakCsBroker
       rescue ServiceInstances::ServiceUnavailableError => e
         logger.error("Service unavailable: #{e.message}")
         status 503
-        { description: "Could not bind because service is unavailable" }.to_json
+        {description: "Could not bind because service is unavailable"}.to_json
       rescue RiakCsBroker::ServiceInstances::ClientError => e
         logger.error(e.message)
         logger.error(e.backtrace)
         status 500
-        { description: e.message }.to_json
+        {description: e.message}.to_json
       end
     end
 
@@ -116,24 +118,24 @@ module RiakCsBroker
       rescue ServiceInstances::ServiceUnavailableError => e
         logger.error("Service unavailable: #{e.message}")
         status 503
-        { description: "Could not bind because service is unavailable" }.to_json
+        {description: "Could not bind because service is unavailable"}.to_json
       rescue RiakCsBroker::ServiceInstances::ClientError => e
         logger.error(e.message)
         logger.error(e.backtrace)
         status 500
-        { description: e.message }.to_json
+        {description: e.message}.to_json
       end
     end
 
     def instances
       @instances ||= ServiceInstances.new(
-        {
-          host:              Config.riak_cs.host,
-          port:              Config.riak_cs.port,
-          scheme:            Config.riak_cs.scheme,
-          access_key_id:     Config.riak_cs.access_key_id,
-          secret_access_key: Config.riak_cs.secret_access_key,
-        })
+          {
+              host: ENV['RADOS_HOST'] || Config.riak_cs.host,
+              port: ENV['RADOS_PORT'] || Config.riak_cs.port,
+              scheme: ENV['RADOS_SCHEME'] || Config.riak_cs.scheme,
+              access_key_id: ENV['RADOS_ACCESS_KEY_ID'] || Config.riak_cs.access_key_id,
+              secret_access_key: ENV['RADOS_SECRET_ACCESS_KEY'] || Config.riak_cs.secret_access_key,
+          })
     end
 
     def logger
@@ -143,9 +145,9 @@ module RiakCsBroker
     private
     def sanitized_request
       {
-        headers: filtered_request_headers,
-        body: request.body.read,
-        params: params
+          headers: filtered_request_headers,
+          body: request.body.read,
+          params: params
       }
     end
 
