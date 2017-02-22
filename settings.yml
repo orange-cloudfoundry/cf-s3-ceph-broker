@@ -16,12 +16,12 @@ catalog:
     id: 33d2eeb0-0236-4c83-b494-da3faeb5b2e8
     metadata:
       displayName: S3-Ceph
-      documentationUrl: https://github.com/cloudfoundry/cf-riak-cs-broker
+      documentationUrl: https://github.com/orange-cloudfoundry/cf-s3-ceph-broker
       imageUrl: http://docs.ceph.com/docs/giant/_static/logo.png
       longDescription: Provisioning the service creates a Ceph bucket through Rados gateway. Binding an
         application creates unique credentials for that application to access the bucket.
       providerDisplayName: S3-Ceph
-      supportUrl: https://github.com/cloudfoundry/cf-riak-cs-broker/issues
+      supportUrl: https://github.com/orange-cloudfoundry/cf-s3-ceph-broker/issues
     name: s3-ceph
     plans:
     - description: A bucket on Ceph (Rados gateway).
